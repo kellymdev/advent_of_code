@@ -1,10 +1,18 @@
 require_relative 'ip_address.rb'
+require_relative 'ssl_address.rb'
 
 # input = <<-STRING
 # abba[mnop]qrst
 # ioxxoj[asdfgh]zxcvbn
 # aaaa[qwer]tyui
 # abcd[bddb]xyyx
+# STRING
+
+# input = <<-STRING
+# aba[bab]xyz
+# xyx[xyx]xyx
+# aaa[kek]eke
+# zazbz[bzb]cdb
 # STRING
 
 input = <<-STRING
@@ -2010,5 +2018,10 @@ tjwhvzwmhppijorvm[egqxqiycnbtxrii]ojmqyikithgouyu[lrllrgezaulugvlj]jdsrysawxkpgl
 spwwppgjgfexuezrixp[rotgzyxzqxyrroafx]tkwxfiamzdjdqpftvq
 STRING
 
+# Part 1
 ip_address = IpAddress.new(input)
 ip_address.run
+
+# Part 2
+ssl_address = SslAddress.new(input)
+ssl_address.run
