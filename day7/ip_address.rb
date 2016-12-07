@@ -18,9 +18,6 @@ class IpAddress
   private
 
   def abba_in_square_brackets?(address)
-    hypernet = ""
-    brace_count = number_of_opening_square_braces(address)
-
     sub_addresses = address.split("[")
 
     sub_addresses[1..-1].each do |subaddress|
@@ -30,22 +27,6 @@ class IpAddress
     end
 
     false
-  end
-
-  def number_of_opening_square_braces(address)
-    brace_count = 0
-
-    address.chars.each do |char|
-      if opening_square_brace?(char)
-        brace_count += 1
-      end
-    end
-
-    brace_count
-  end
-
-  def opening_square_brace?(char)
-    char == "["
   end
 
   def print_tls_count

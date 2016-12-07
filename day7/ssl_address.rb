@@ -18,66 +18,53 @@ class SslAddress
   private
 
   def supports_ssl?(address)
-    bab = bab_inside_square_brackets(address)
+    bab_list = bab_inside_square_brackets(address)
 
-    aba_outside_square_brackets?(address, bab) if bab
+    aba_outside_square_brackets?(address, bab_list) if !bab_list.empty?
   end
 
   def bab_inside_square_brackets(address)
-    hypernet = ""
-    brace_count = number_of_opening_square_braces(address)
-
     sub_addresses = address.split("[")
+
+    bab_list = []
 
     sub_addresses[1..-1].each do |subaddress|
       hypernet = subaddress.split("]").first
 
-      bab = contains_bab(hypernet)
-
-      return bab
+      bab_list += contains_bab(hypernet)
     end
+
+    return bab_list
   end
 
-  def aba_outside_square_brackets?(address, bab)
-    corresponding_aba = @aba_list.key(bab)
-    substring = ""
-    brace_count = number_of_opening_square_braces(address)
+  def aba_outside_square_brackets?(address, bab_list)
+    bab_list.each do |bab|
+      corresponding_aba = @aba_list.key(bab)
 
-    sub_addresses = address.split("]")
+      sub_addresses = address.split("]")
 
-    sub_addresses[0..-1].each do |subaddress|
-      substring = subaddress.split("[").first
+      sub_addresses[0..-1].each do |subaddress|
+        supernet = subaddress.split("[").first
 
-      return true if corresponding_aba && contains_aba?(substring, corresponding_aba)
+        return true if corresponding_aba && contains_aba?(supernet, corresponding_aba)
+      end
     end
 
     false
   end
 
   def contains_bab(hypernet)
+    bab_list = []
+
     @aba_list.values.each do |bab|
-      return bab if hypernet.include?(bab)
-    end
-  end
-
-  def contains_aba?(substring, aba)
-    substring.include?(aba)
-  end
-
-  def number_of_opening_square_braces(address)
-    brace_count = 0
-
-    address.chars.each do |char|
-      if opening_square_brace?(char)
-        brace_count += 1
-      end
+      bab_list << bab if hypernet.include?(bab)
     end
 
-    brace_count
+    bab_list
   end
 
-  def opening_square_brace?(char)
-    char == "["
+  def contains_aba?(supernet, aba)
+    supernet.include?(aba)
   end
 
   def print_ssl_count
