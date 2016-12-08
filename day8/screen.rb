@@ -36,16 +36,28 @@ class Screen
     rotate_row(row, move)
   end
 
-  def rotate_row(row, move)
-    row_to_move = @display[row].map { |x| x }
+  def rotate_row(row_number, move)
+    row_to_move = @display[row_number].map { |x| x }
 
     DISPLAY_WIDTH.times do |index|
-
-      @display[row][(move + index) % DISPLAY_WIDTH] = row_to_move[index]
+      @display[row_number][(move + index) % DISPLAY_WIDTH] = row_to_move[index]
     end
   end
 
   def perform_rotate_column(instruction)
+    values = instruction[16..-1].split(" by ")
+    column = values.first.to_i
+    move = values.last.to_i
+
+    rotate_column(column, move)
+  end
+
+  def rotate_column(column_number, move)
+    column_to_move = @display.transpose[column_number].map { |x| x }
+
+    DISPLAY_HEIGHT.times do |index|
+      @display[(move + index) % DISPLAY_HEIGHT][column_number] = column_to_move[index]
+    end
   end
 
   def perform_rect(instruction)
