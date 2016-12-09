@@ -1,6 +1,6 @@
 class DecompressFile
   def initialize(input)
-    @input = input
+    @input = format_input(input)
     @decompressed = ""
     @decompressed_length = 0
   end
@@ -25,7 +25,7 @@ class DecompressFile
       count = 0
 
       if char == "("
-        segment = array.join("").split(")").first
+        segment = array.join.split(")").first
 
         hash = find_chars_and_count(segment)
 
@@ -57,5 +57,9 @@ class DecompressFile
 
   def print_decompressed
     puts "#{@decompressed}"
+  end
+
+  def format_input(input)
+    input.chars.reject{ |char| char == " " }.join
   end
 end
