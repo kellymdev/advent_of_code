@@ -21,9 +21,11 @@ class DecompressFile
 
     while array.length > 0
       char = array.shift
+      chars = 0
+      count = 0
 
       if char == "("
-        segment = data.split(")").first
+        segment = array.join("").split(")").first
 
         hash = find_chars_and_count(segment)
 
