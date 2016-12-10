@@ -1,6 +1,4 @@
 class CalculateDecompression
-  LETTERS = /[A-Z]+/
-
   def initialize(input)
     @input = format_input(input)
     @decompressed_length = 0
@@ -22,6 +20,8 @@ class CalculateDecompression
       chars = 0
       count = 0
 
+      puts array.length
+
       if char == "("
         segment = array.join.split(")").first
 
@@ -31,17 +31,14 @@ class CalculateDecompression
 
         group = ""
         hash[:chars].times { group += array.shift }
-        hash[:count].times { @decompressed_length += calculate_filtered_length(group) }
 
-        group.chars.reverse.each { |char| array.unshift(char) }
+        hash[:count].times do
+          group.chars.reverse.each { |char| array.unshift(char) }
+        end
       else
         @decompressed_length += 1
       end
     end
-  end
-
-  def calculate_filtered_length(group)
-    LETTERS.match(group).to_s.size
   end
 
   def find_chars_and_count(segment)
