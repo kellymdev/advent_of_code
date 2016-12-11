@@ -1,4 +1,7 @@
 class Radioisotope
+  MICROCHIP = "m"
+  GENERATOR = "g"
+
   MICROCHIPS = {
     hm: "hydrogen-compatible microchip",
     lm: "lithium-compatible microchip",
@@ -22,6 +25,8 @@ class Radioisotope
   def initialize(input)
     @input = format_input(input)
     @building = [[],[],[],[]]
+    @elevator = []
+    @steps = 0
   end
 
   def run
@@ -34,10 +39,39 @@ class Radioisotope
 
   private
 
+  def can_use_elevator?
+    !@elevator.empty? && @elevator.size < 3
+  end
+
+  def elevator_empty?
+    @elevator.empty?
+  end
+
   def print_building_layout
     @building.each_with_index do |floor, index|
       puts "F#{index + 1} #{floor}"
     end
+  end
+
+  def compatible_equipment?(equipment1, equipment2)
+    if both_generators?(equipment1, equipment2) ||
+      both_microchips?(equipment1, equipment2)
+      return true
+    elsif equipment2.include?(MICROCHIP)
+      compatible_microchip_and_generator?(equipment1, equipment2)
+    end
+  end
+
+  def compatible_microchip_and_generator(microchip, generator)
+    microchip[0] == generator[0]
+  end
+
+  def both_generators?(equipment1, equipment2)
+    equipment1.include?(GENERATOR) && equipment2.include?(GENERATOR)
+  end
+
+  def both_microchips?(equipment1, equipment2)
+    equipment1.include?(MICROCHIP) && equipment2.include?(MICROCHIP)
   end
 
   def add_floor_data_to_building(floor, index)
