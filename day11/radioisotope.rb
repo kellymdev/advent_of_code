@@ -39,6 +39,15 @@ class Radioisotope
 
   private
 
+  def move_between_floors(start_floor, end_floor, equipment)
+    raise "Can only move 1 floor at a time" unless (end_floor - start_floor).abs == 1
+
+    @building[start_floor - 1] -= [equipment]
+    @building[end_floor - 1] += [equipment]
+
+    @steps += 1
+  end
+
   def can_use_elevator?
     !@elevator.empty? && @elevator.size < 3
   end
