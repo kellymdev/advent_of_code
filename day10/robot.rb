@@ -14,7 +14,6 @@ class Robot
     end
 
     bot = find_bot_with_two_values
-    puts bot_with_values
 
     print_bots
   end
