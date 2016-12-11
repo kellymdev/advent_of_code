@@ -13,10 +13,25 @@ class Robot
       end
     end
 
+    bot = find_bot_with_two_values
+    puts bot_with_values
+
     print_bots
   end
 
   private
+
+  def find_bot_with_two_values
+    bot_with_values = []
+
+    @bots.each do |bot, value|
+      value.each do |key, value2|
+        bots_with_values << bot if value2.size == 2
+      end
+    end
+
+    bot_with_values
+  end
 
   def print_bots
     @bots.each do |bot|
