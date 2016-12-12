@@ -5,7 +5,7 @@ class Assembunny
     @registers = {
       a: 0,
       b: 0,
-      c: 0,
+      c: 1,
       d: 0
     }
   end
