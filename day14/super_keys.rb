@@ -3,18 +3,21 @@ class SuperKeys
 
   def initialize(salt)
     @salt = salt
+    @hashes = []
     @indices = []
     @index = 0
     @digest = ""
   end
 
   def run
+    100_000.times do |index|
+      @hashes << create_hash(index)
+    end
+
     while @indices.size < 64
-      @digest = compute_digest(@index)
+      digest = @hashes[@index]
 
-      2016.times { rehash_digest }
-
-      char = triple_characters_contained(@digest)
+      char = triple_characters_contained(digest)
 
       if char && stream_contains_five_chars(char)
         @indices << @index
@@ -24,10 +27,19 @@ class SuperKeys
     end
 
     print_indices
+    print_line
     print_64th_key
   end
 
   private
+
+  def create_hash(index)
+    @digest = compute_digest(index)
+
+    2016.times { rehash_digest }
+
+    @digest
+  end
 
   def rehash_digest
     @digest = Digest::MD5.hexdigest(@digest)
@@ -35,6 +47,10 @@ class SuperKeys
 
   def print_indices
     puts @indices
+  end
+
+  def print_line
+    puts "-" * 5
   end
 
   def print_64th_key
@@ -45,7 +61,7 @@ class SuperKeys
     five = char * 5
 
     1000.times do |count|
-      digest = compute_digest(@index + count + 1)
+      digest = @hashes[@index + count + 1]
 
       return true if digest.include?(five)
     end
