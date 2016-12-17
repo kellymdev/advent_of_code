@@ -25,7 +25,7 @@ class AccessVault
   end
 
   def run
-    while !in_vault_room?
+    while !in_vault_room? && !blocked?(generate_hash)
       door_list = generate_hash
 
       if can_move_down?(door_list)
@@ -41,10 +41,15 @@ class AccessVault
       print_steps_taken
     end
 
-    print_steps_taken
+    print_line
+    print_steps_taken if in_vault_room?
   end
 
   private
+
+  def print_line
+    puts "-" * 20
+  end
 
   def print_steps_taken
     puts @steps_taken
@@ -98,8 +103,8 @@ class AccessVault
     door_open?(door_list[3])
   end
 
-  def blocked
-    !can_move_up? && !can_move_down? && !can_move_left? && !can_move_right?
+  def blocked?(door_list)
+    !can_move_up?(door_list) && !can_move_down?(door_list) && !can_move_left?(door_list) && !can_move_right?(door_list)
   end
 
   def door?(row, column)
