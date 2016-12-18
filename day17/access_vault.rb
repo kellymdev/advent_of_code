@@ -34,27 +34,23 @@ class AccessVault
 
     loop do
       @possible_steps.compact.uniq.each_with_index do |step, index|
-        puts step
-
         position = calculate_current_position(step)
-        puts position
 
         if in_vault_room?(position[0], position[1])
-          @steps_taken = step.join
+          @steps_taken = step
           print_steps_taken
 
           return
         end
 
-        door_list = generate_hash(step)
+        door_codes = generate_hash(step)
 
-        moves = calculate_possible_moves(door_list, position[0], position[1])
+        next_moves = calculate_possible_moves(door_codes, position[0], position[1])
 
         @possible_steps[index] = nil
 
-
-        if moves
-          moves.chars.each do |char|
+        if next_moves
+          next_moves.chars.each do |char|
             @possible_steps << step + char
           end
         end
@@ -86,6 +82,8 @@ class AccessVault
     moves += "D" if can_move_down?(door_list, row, column)
     moves += "L" if can_move_left?(door_list, row, column)
     moves += "R" if can_move_right?(door_list, row, column)
+
+    moves
   end
 
   def print_steps_taken
@@ -118,10 +116,6 @@ class AccessVault
     return false unless door?(row, column + 1)
 
     door_open?(door_list[3])
-  end
-
-  def blocked?(door_list)
-    !can_move_up?(door_list) && !can_move_down?(door_list) && !can_move_left?(door_list) && !can_move_right?(door_list)
   end
 
   def door?(row, column)
