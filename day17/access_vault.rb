@@ -19,86 +19,103 @@ class AccessVault
 
   def initialize(passcode)
     @passcode = passcode
+    @possible_steps = []
     @steps_taken = ""
-    @current_row = 1
-    @current_column = 1
+    @start_row = 1
+    @start_column = 1
   end
 
   def run
-    while !in_vault_room? && !blocked?(generate_hash)
-      door_list = generate_hash
+    door_list = generate_hash("")
 
-      if can_move_down?(door_list)
-        move_down
-      elsif can_move_right?(door_list)
-        move_right
-      elsif can_move_up?(door_list)
-        move_up
-      elsif can_move_left?(door_list)
-        move_left
+    moves = calculate_possible_moves(door_list, @start_row, @start_column)
+
+    @possible_steps = moves.chars
+
+    loop do
+      @possible_steps.compact.uniq.each_with_index do |step, index|
+        puts step
+
+        position = calculate_current_position(step)
+        puts position
+
+        if in_vault_room?(position[0], position[1])
+          @steps_taken = step.join
+          print_steps_taken
+
+          return
+        end
+
+        door_list = generate_hash(step)
+
+        moves = calculate_possible_moves(door_list, position[0], position[1])
+
+        @possible_steps[index] = nil
+
+
+        if moves
+          moves.chars.each do |char|
+            @possible_steps << step + char
+          end
+        end
       end
-
-      print_steps_taken
     end
-
-    print_line
-    print_steps_taken if in_vault_room?
   end
 
   private
 
-  def print_line
-    puts "-" * 20
+  def calculate_current_position(steps)
+    row = @start_row
+    column = @start_column
+
+    steps.chars.each do |step|
+      case step
+        when "U" then row -= 2
+        when "D" then row += 2
+        when "L" then column -= 2
+        when "R" then column += 2
+      end
+    end
+
+    [row, column]
+  end
+
+  def calculate_possible_moves(door_list, row, column)
+    moves = ""
+    moves += "U" if can_move_up?(door_list, row, column)
+    moves += "D" if can_move_down?(door_list, row, column)
+    moves += "L" if can_move_left?(door_list, row, column)
+    moves += "R" if can_move_right?(door_list, row, column)
   end
 
   def print_steps_taken
     puts @steps_taken
   end
 
-  def in_vault_room?
-    @current_row == 7 && @current_column == 7
+  def in_vault_room?(row, column)
+    row == 7 && column == 7
   end
 
-  def move_up
-    @current_row -= 2
-    @steps_taken += "U"
-  end
-
-  def move_down
-    @current_row += 2
-    @steps_taken += "D"
-  end
-
-  def move_left
-    @current_column -= 2
-    @steps_taken += "L"
-  end
-
-  def move_right
-    @current_column += 2
-    @steps_taken += "R"
-  end
-
-  def can_move_up?(door_list)
-    return false unless door?(@current_row - 1, @current_column)
+  def can_move_up?(door_list, row, column)
+    return false unless door?(row - 1, column)
 
     door_open?(door_list[0])
   end
 
-  def can_move_down?(door_list)
-    return false unless door?(@current_row + 1, @current_column)
+  def can_move_down?(door_list, row, column)
+    return false unless door?(row + 1, column)
 
     door_open?(door_list[1])
   end
 
-  def can_move_left?(door_list)
-    return false unless door?(@current_row, @current_column - 1)
+  def can_move_left?(door_list, row, column)
+    return false unless door?(row, column - 1)
 
     door_open?(door_list[2])
   end
 
-  def can_move_right?(door_list)
-    return false unless door?(@current_row, @current_column + 1)
+  def can_move_right?(door_list, row, column)
+    return false unless door?(row, column + 1)
 
     door_open?(door_list[3])
   end
@@ -115,8 +132,8 @@ class AccessVault
     DOOR_OPEN.include?(door_code)
   end
 
-  def generate_hash
-    digest = Digest::MD5.hexdigest(@passcode + @steps_taken)
+  def generate_hash(steps)
+    digest = Digest::MD5.hexdigest(@passcode + steps)
 
     digest[0..3].chars
   end
