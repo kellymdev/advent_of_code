@@ -10,14 +10,15 @@ class Tile
 
   def run
     (@number_of_rows - 1).times do |index|
+      puts "creating tiles for row #{index + 1}"
       create_tiles_for(index + 1)
     end
 
     tiles = count_number_of_safe_tiles
 
-    print_tile_count(tiles)
-
     print_map
+
+    print_tile_count(tiles)
   end
 
   private
