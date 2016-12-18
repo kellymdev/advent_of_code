@@ -52,14 +52,18 @@ class Tile
   def determine_new_tile(left_tile, centre_tile, right_tile)
     tiles = left_tile + centre_tile + right_tile
 
-    if tiles == "#{TRAP}#{TRAP}#{SAFE_TILE}" ||
-      tiles == "#{SAFE_TILE}#{TRAP}#{TRAP}" ||
-      tiles == "#{TRAP}#{SAFE_TILE}#{SAFE_TILE}" ||
-      tiles == "#{SAFE_TILE}#{SAFE_TILE}#{TRAP}"
+    if generate_trap?(tiles)
       TRAP
     else
       SAFE_TILE
     end
+  end
+
+  def generate_trap?(tiles)
+    tiles == "#{TRAP}#{TRAP}#{SAFE_TILE}" ||
+      tiles == "#{SAFE_TILE}#{TRAP}#{TRAP}" ||
+      tiles == "#{TRAP}#{SAFE_TILE}#{SAFE_TILE}" ||
+      tiles == "#{SAFE_TILE}#{SAFE_TILE}#{TRAP}"
   end
 
   def left_edge_tile?(column)
