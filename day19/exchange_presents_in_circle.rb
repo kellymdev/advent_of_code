@@ -14,7 +14,7 @@ class ExchangePresentsInCircle
       puts "Elf: #{elf}"
 
       elf_to_take_from = elf_across_the_circle(index)
-      puts "Elf to take from: #{elf_to_take_from}"
+      puts "Index of elf to take from: #{elf_to_take_from}"
 
       presents_to_take = @elves[elf_to_take_from].values.join.to_i
 
@@ -25,11 +25,9 @@ class ExchangePresentsInCircle
 
       @elves[elf_to_take_from] = nil
 
-      @elves.compact!
-
       index = (index + 1) % @elves.size
 
-      print_elves
+      @elves.compact!
     end
 
     print_elves
