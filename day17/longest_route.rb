@@ -8,8 +8,8 @@ class LongestRoute
             ["#", "-", "#", "-", "#", "-", "#", "-", "#"],
             ["#", ".", "|", ".", "|", ".", "|", ".", "#"],
             ["#", "-", "#", "-", "#", "-", "#", "-", "#"],
-            ["#", ".", "|", ".", "|", ".", "|", ".", "."],
-            ["#", "#", "#", "#", "#", "#", "#", ".", "V"]]
+            ["#", ".", "|", ".", "|", ".", "|", ".", "#"],
+            ["#", "#", "#", "#", "#", "#", "#", "#", "V"]]
 
   DOOR = %w(| -)
   START_ROOM = "S"
@@ -25,25 +25,23 @@ class LongestRoute
   end
 
   def run
+    steps = 0
     door_list = generate_hash("")
 
-    moves = calculate_possible_moves(door_list, @start_row, @start_column)
+    moves = calculate_possible_moves(door_list, [@start_row, @start_column])
 
     @positions = moves.chars
 
     while @positions.length > 0
-      if @positions.length == 1
-        steps = calculate_maximum_steps
-        print_steps(steps)
-      end
-
       step = @positions.shift
       position = calculate_current_position(step)
 
-      unless in_vault_room?(position[0], position[1])
+      if in_vault_room?(position)
+        steps = [step.length, steps].max
+      else
         door_codes = generate_hash(step)
 
-        next_moves = calculate_possible_moves(door_codes, position[0], position[1])
+        next_moves = calculate_possible_moves(door_codes, position)
 
         if next_moves
           next_moves.chars.each do |char|
@@ -52,6 +50,8 @@ class LongestRoute
         end
       end
     end
+
+    print_steps(steps)
   end
 
   private
@@ -80,7 +80,10 @@ class LongestRoute
     [row, column]
   end
 
-  def calculate_possible_moves(door_list, row, column)
+  def calculate_possible_moves(door_list, position)
+    row = position[0]
+    column = position[1]
+
     moves = ""
     moves += "U" if can_move_up?(door_list, row, column)
     moves += "D" if can_move_down?(door_list, row, column)
@@ -94,8 +97,8 @@ class LongestRoute
     puts @steps_taken
   end
 
-  def in_vault_room?(row, column)
-    row == 7 && column == 7
+  def in_vault_room?(position)
+    position[0] == 7 && position[1] == 7
   end
 
   def can_move_up?(door_list, row, column)
