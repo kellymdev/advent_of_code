@@ -61,7 +61,6 @@ class LongestRoute
   end
 
   def calculate_maximum_steps
-    # longest_step = @positions.sort_by { |step| step.size }.last
     @positions.first.size
   end
 
