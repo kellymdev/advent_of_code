@@ -20,8 +20,6 @@ class CalculateDecompression
       chars = 0
       count = 0
 
-      puts array.length
-
       if char == "("
         segment = array.join.split(")").first
 
@@ -32,7 +30,21 @@ class CalculateDecompression
         group = ""
         hash[:chars].times { group += array.shift }
 
-        hash[:count].times do
+        numbers = group.scan(/(\d+)[x](\d+)/)
+
+        if numbers.empty?
+          segment_characters = group.scan(/[A-Z]/).size
+          total = hash[:count] * segment_characters
+          @decompressed_length += total
+        else
+          numbers.each do |number_pair|
+            char_match = number_pair[0]
+            count_match = number_pair[1].to_i
+            new_count = count_match * hash[:count]
+
+            group.gsub!(/#{char_match}[x]#{count_match}/, "#{char_match}x#{new_count}")
+          end
+
           group.chars.reverse.each { |char| array.unshift(char) }
         end
       else
