@@ -30,7 +30,7 @@ class CalculateDecompression
         group = ""
         hash[:chars].times { group += array.shift }
 
-        numbers = group.scan(/(\d+)[x](\d+)/)
+        numbers = find_number_groups(group)
 
         if numbers.empty?
           segment_characters = group.scan(/[A-Z]/).size
@@ -51,6 +51,10 @@ class CalculateDecompression
         @decompressed_length += 1
       end
     end
+  end
+
+  def find_number_groups(group)
+    group.scan(/(\d+)[x](\d+)/)
   end
 
   def find_chars_and_count(segment)
