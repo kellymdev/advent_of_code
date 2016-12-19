@@ -34,6 +34,8 @@ class ExchangePresents
 
         puts "next elf: #{next_elf_with_presents}"
 
+        return if next_elf_with_presents == index
+
         presents_to_take = @elves[next_elf_with_presents]
 
         @elves[index] += presents_to_take if presents_to_take
@@ -43,21 +45,16 @@ class ExchangePresents
   end
 
   def index_of_next_elf(current_index)
-    next_index = (current_index + 1) % @number_of_elves
+    count = 1
+    next_index = (current_index + count) % @number_of_elves
 
-    if @elves[next_index].nil?
-      next_elf_value = @elves[next_index..-1].select { |elf| elf > 0 if elf }.first
-      index = @elves[next_index..-1].index(next_elf_value) + next_index
+    while @elves[next_index].nil?
+      count += 1
 
-      unless index
-        next_elf_value = @elves[0..(current_index - 1)].select { |elf| elf > 0 if elf }.first
-        index = @elves[0..(current_index - 1)].index(next_elf_value)
-      end
-
-      index
-    else
-      next_index
+      next_index = (current_index + count) % @number_of_elves
     end
+
+    next_index
   end
 
   def create_elves
