@@ -1,10 +1,14 @@
 require_relative 'access_vault.rb'
+require_relative 'longest_route.rb'
 
-# input = "ihgpwlah"
+input = "ihgpwlah"
 # input = "kglvqrro"
 # input = "ulqzkmiv"
 
-input = "gdjjyniy"
+# input = "gdjjyniy"
 
-vault = AccessVault.new(input)
-vault.run
+# vault = AccessVault.new(input)
+# vault.run
+
+steps = LongestRoute.new(input)
+steps.run
