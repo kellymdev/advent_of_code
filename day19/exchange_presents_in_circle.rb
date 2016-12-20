@@ -16,18 +16,21 @@ class ExchangePresentsInCircle
       elf_to_take_from = elf_across_the_circle(index)
       puts "Index of elf to take from: #{elf_to_take_from}"
 
-      presents_to_take = @elves[elf_to_take_from].values.join.to_i
+      presents_to_take = @elves[elf_to_take_from].values.first
 
-      elf_number = elf.keys.join.to_i
-      puts "Elf number: #{elf_number}"
+      elf_number = elf.keys.first.to_i
 
       elf[elf_number] += presents_to_take
 
       @elves[elf_to_take_from] = nil
 
-      index = (index + 1) % @elves.size
-
       @elves.compact!
+
+      if index > elf_to_take_from
+        index = index % @elves.size
+      else
+        index = (index + 1) % @elves.size
+      end
     end
 
     print_elves

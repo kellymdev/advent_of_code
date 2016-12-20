@@ -25,32 +25,44 @@ class CalculateDecompression
 
         hash = find_chars_and_count(segment)
 
-        (array.index(")") + 1).times { array.shift }
-
         group = ""
+        (array.index(")") + 1).times { group += array.shift }
+
         hash[:chars].times { group += array.shift }
 
-        numbers = find_number_groups(group)
-
-        if numbers.empty?
-          segment_characters = group.scan(/[A-Z]/).size
-          total = hash[:count] * segment_characters
-          @decompressed_length += total
-        else
-          numbers.each do |number_pair|
-            char_match = number_pair[0]
-            count_match = number_pair[1].to_i
-            new_count = count_match * hash[:count]
-
-            group.gsub!(/#{char_match}[x]#{count_match}/, "#{char_match}x#{new_count}")
-          end
-
-          group.chars.reverse.each { |char| array.unshift(char) }
-        end
-      else
-        @decompressed_length += 1
+        @decompressed_length += process_string(group)
       end
     end
+  end
+
+  def process_string(string)
+    puts "String: #{string}"
+
+    first_part = find_first_part(string)
+    middle_part = find_middle_part(string)
+    last_part = find_last_part(string)
+
+    puts "1: #{first_part}"
+    puts "2: #{middle_part}"
+    puts "3: #{last_part}"
+
+    first_part.size + find_first_number(string) * process_string(middle_part) + process_string(last_part)
+  end
+
+  def find_first_part(string)
+    string.scan(/([A-Z]*)\(/).first.first
+  end
+
+  def find_middle_part(string)
+    string.scan(/\(\d+[x]\d+\)/).first
+  end
+
+  def find_last_part(string)
+    string.scan(/\)([A-Z]*)/).last.first
+  end
+
+  def find_first_number(string)
+    string.scan(/(\d+)[x]/).first.first.to_i
   end
 
   def find_number_groups(group)
