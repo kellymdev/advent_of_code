@@ -58,7 +58,9 @@ class CalculateDecompression
   end
 
   def find_last_part(string)
-    string.scan(/\)([A-Z]*)/).last.first
+    middle_part = find_middle_part(string)
+
+    string.split(middle_part).last
   end
 
   def find_first_number(string)
