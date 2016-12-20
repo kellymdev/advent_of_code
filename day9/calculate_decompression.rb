@@ -25,7 +25,7 @@ class CalculateDecompression
 
         hash = find_chars_and_count(segment)
 
-        group = ""
+        group = "("
         (array.index(")") + 1).times { group += array.shift }
 
         hash[:chars].times { group += array.shift }
@@ -38,45 +38,52 @@ class CalculateDecompression
   def process_string(string)
     puts "String: #{string}"
 
-    first_part = find_first_part(string)
-    middle_part = find_middle_part(string)
-    last_part = find_last_part(string)
+    middle_start = find_middle_start(string)
+    middle_end = find_middle_end(string)
 
-    puts "1: #{first_part}"
-    puts "2: #{middle_part}"
-    puts "3: #{last_part}"
+    middle_length = if middle_start != middle_end
+                      get_middle_length(string)
+                    else
+                      0
+                    end
 
-    first_part.size + find_first_count(string) * process_string(middle_part) + process_string(last_part)
+    middle_start + middle_length + process_string(string[(middle_end + 1)..-1])
   end
 
-  def find_first_part(string)
-    string.scan(/([A-Z]*)\(/).first.first
+  def find_middle_start(string)
+    string.include?("(") ? string.chars.index("(") : 0
   end
 
-  def find_middle_part(string)
-    pair = find_number_groups(string).first
+  def find_middle_end(string)
+    numbers = find_number_groups(string)
 
-    chars = pair.first.to_i
+    if numbers.empty?
+      0
+    else
+      pair = numbers.first
+      chars = pair.first.to_i
 
-    array = string.chars
+      array = string.chars
 
-    middle = ""
-
-    (array.index(")") + 1).times { middle += array.shift }
-
-    chars.times { middle += array.shift }
-
-    middle
+      array.index(")") + chars
+    end
   end
 
-  def find_last_part(string)
-    middle_part = find_middle_part(string)
+  def get_middle_length(string)
+    start = find_middle_start(string)
+    end_of_middle = find_middle_end(string)
 
-    string.split(middle_part).last
+    middle_subsection = string.chars.index(")") + 1
+
+    count = find_first_count(string)
+
+    middle = count * process_string(string[middle_subsection..end_of_middle])
   end
 
   def find_first_count(string)
-    find_number_groups(string).first.last
+    numbers = find_number_groups(string)
+
+    !numbers.empty? ? numbers.first.last : 0
   end
 
   def find_number_groups(group)
