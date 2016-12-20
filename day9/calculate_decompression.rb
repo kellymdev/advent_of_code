@@ -46,7 +46,7 @@ class CalculateDecompression
     puts "2: #{middle_part}"
     puts "3: #{last_part}"
 
-    first_part.size + find_first_number(string) * process_string(middle_part) + process_string(last_part)
+    first_part.size + find_first_count(string) * process_string(middle_part) + process_string(last_part)
   end
 
   def find_first_part(string)
@@ -54,7 +54,19 @@ class CalculateDecompression
   end
 
   def find_middle_part(string)
-    string.scan(/\(\d+[x]\d+\)/).first
+    pair = find_number_groups(string).first
+
+    chars = pair.first.to_i
+
+    array = string.chars
+
+    middle = ""
+
+    (array.index(")") + 1).times { middle += array.shift }
+
+    chars.times { middle += array.shift }
+
+    middle
   end
 
   def find_last_part(string)
@@ -63,8 +75,8 @@ class CalculateDecompression
     string.split(middle_part).last
   end
 
-  def find_first_number(string)
-    string.scan(/(\d+)[x]/).first.first.to_i
+  def find_first_count(string)
+    find_number_groups(string).first.last
   end
 
   def find_number_groups(group)
@@ -79,7 +91,7 @@ class CalculateDecompression
   end
 
   def print_decompressed_length
-    puts "#{@decompressed_length}"
+    puts "#Length: {@decompressed_length}"
   end
 
   def format_input(input)
