@@ -28,6 +28,7 @@ class Radioisotope
     @elevator = []
     @equipment_count = 0
     @steps = 0
+    @possible_moves = []
   end
 
   def run
@@ -35,10 +36,49 @@ class Radioisotope
       add_floor_data_to_building(floor, index)
     end
 
+    # while !all_equipment_on_top_floor?
+      find_possible_moves
+    # end
+
+    puts "Possible moves: #{@possible_moves}"
+
     print_building_layout
   end
 
   private
+
+  def find_possible_moves
+    @building.each_with_index do |floor, index|
+      if index < 3
+        floor.each do |equipment|
+          if compatible_equipment_on_floor?(equipment, index + 1)
+            move = {
+              equipment: [equipment],
+              from_index: index,
+              to_index: index + 1
+            }
+
+            @possible_moves << move
+          end
+
+          if microchip?(equipment) && microchip_and_compatible_generator_on_floor?(equipment, index)
+            generator = equipment[0] + "g"
+
+            if compatible_equipment_on_floor?(equipment, index + 1) && compatible_equipment_on_floor?(equipment, index + 1)
+
+              move = {
+                equipment: [equipment, generator.to_sym],
+                from_index: index,
+                to_index: index + 1
+              }
+
+              @possible_moves << move
+            end
+          end
+        end
+      end
+    end
+  end
 
   def move_between_floors(start_floor, end_floor, equipment)
     raise "Can only move 1 floor at a time" unless (end_floor - start_floor).abs == 1
@@ -67,6 +107,26 @@ class Radioisotope
     end
   end
 
+  def microchip_and_compatible_generator_on_floor?(equipment, floor_index)
+    if microchip?(equipment)
+      generator = equipment[0] + "g"
+
+      @building[floor_index].include?(generator.to_sym)
+    elsif generator?(equipment)
+      microchip = equipment[0] + "m"
+
+      @building[floor_index].include?(microchip.to_sym)
+    end
+  end
+
+  def compatible_equipment_on_floor?(equipment1, floor_index)
+    compatibility = @building[floor_index].map do |equipment2|
+      compatible_equipment?(equipment1, equipment2)
+    end
+
+    !compatibility.include?(false)
+  end
+
   def compatible_equipment?(equipment1, equipment2)
     if both_generators?(equipment1, equipment2) ||
       both_microchips?(equipment1, equipment2)
@@ -76,21 +136,29 @@ class Radioisotope
     end
   end
 
-  def compatible_microchip_and_generator(microchip, generator)
+  def compatible_microchip_and_generator?(microchip, generator)
     microchip[0] == generator[0]
   end
 
   def both_generators?(equipment1, equipment2)
-    equipment1.include?(GENERATOR) && equipment2.include?(GENERATOR)
+    generator?(equipment1) && generator?(equipment2)
   end
 
   def both_microchips?(equipment1, equipment2)
-    equipment1.include?(MICROCHIP) && equipment2.include?(MICROCHIP)
+    microchip?(equipment1) && microchip?(equipment2)
   end
 
   def microchip_and_generator?(equipment1, equipment2)
-    equipment1.include?(GENERATOR) && equipment2.include?(MICROCHIP) ||
-    equipment1.include?(MICROCHIP) && equipment2.include?(GENERATOR)
+    generator?(equipment1) && microchip(equipment2) ||
+    microchip?(equipment1) && generator?(equipment2)
+  end
+
+  def generator?(equipment)
+    equipment.to_s.include?(GENERATOR)
+  end
+
+  def microchip?(equipment)
+    equipment.to_s.include?(MICROCHIP)
   end
 
   def add_floor_data_to_building(floor, index)
@@ -107,7 +175,7 @@ class Radioisotope
   end
 
   def increment_equipment_count
-    @equipment += 1
+    @equipment_count += 1
   end
 
   def find_symbol_for_equipment(equipment)
