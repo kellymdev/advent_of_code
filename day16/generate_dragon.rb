@@ -7,6 +7,7 @@ class GenerateDragon
 
   def run
     while @data.size < @disk_length
+      puts "Data size: #{@data.size}"
       create_data
     end
 
@@ -15,11 +16,10 @@ class GenerateDragon
     calculate_checksum(@data)
 
     while checksum_even?
+      puts "Calculating checksum..."
       calculate_checksum(@checksum)
     end
 
-    print_data
-    print_line
     print_checksum
   end
 

@@ -26,6 +26,7 @@ class Radioisotope
     @input = format_input(input)
     @building = [[],[],[],[]]
     @elevator = []
+    @equipment_count = 0
     @steps = 0
   end
 
@@ -45,6 +46,10 @@ class Radioisotope
     @building[start_floor - 1] -= [equipment]
     @building[end_floor - 1] += [equipment]
 
+    increment_steps
+  end
+
+  def increment_steps
     @steps += 1
   end
 
@@ -66,7 +71,7 @@ class Radioisotope
     if both_generators?(equipment1, equipment2) ||
       both_microchips?(equipment1, equipment2)
       return true
-    elsif equipment2.include?(MICROCHIP)
+    elsif microchip_and_generator?(equipment1, equipment2)
       compatible_microchip_and_generator?(equipment1, equipment2)
     end
   end
@@ -83,6 +88,11 @@ class Radioisotope
     equipment1.include?(MICROCHIP) && equipment2.include?(MICROCHIP)
   end
 
+  def microchip_and_generator?(equipment1, equipment2)
+    equipment1.include?(GENERATOR) && equipment2.include?(MICROCHIP) ||
+    equipment1.include?(MICROCHIP) && equipment2.include?(GENERATOR)
+  end
+
   def add_floor_data_to_building(floor, index)
     return if floor.include?("contains nothing relevant")
 
@@ -92,7 +102,12 @@ class Radioisotope
     isotopes.each do |isotope|
       equipment = find_symbol_for_equipment(isotope)
       add_equipment_to_floor(equipment, index)
+      increment_equipment_count
     end
+  end
+
+  def increment_equipment_count
+    @equipment += 1
   end
 
   def find_symbol_for_equipment(equipment)
@@ -101,6 +116,10 @@ class Radioisotope
     elsif equipment.include?("generator")
       GENERATORS.key(equipment)
     end
+  end
+
+  def all_equipment_on_top_floor?
+    @building[3].size == @equipment_count
   end
 
   def add_equipment_to_floor(equipment_symbol, floor)
