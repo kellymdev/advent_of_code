@@ -5,7 +5,7 @@ class CalculateDecompression
   end
 
   def run
-    calculate_length(@input)
+    @decompressed_length = calculate_length(@input)
 
     print_decompressed_length
   end
@@ -13,85 +13,38 @@ class CalculateDecompression
   private
 
   def calculate_length(data)
-    array = data.chars
+    middle_offset = data.index('(')
+    return data.length unless middle_offset
 
-    while array.length > 0
-      char = array.shift
-      chars = 0
-      count = 0
+    numbers = find_number_groups(data)
 
-      if char == "("
-        segment = array.join.split(")").first
+    middle_multiplier = numbers[2].to_i
+    middle_length = numbers[1].to_i
 
-        hash = find_chars_and_count(segment)
+    middle_start = middle_offset + numbers.to_s.length
+    middle_string = find_middle_string(data, middle_start, middle_length)
 
-        group = ""
-        (array.index(")") + 1).times { group += array.shift }
+    tail = find_last_part(data, middle_start, middle_length)
 
-        hash[:chars].times { group += array.shift }
-
-        @decompressed_length += process_string(group)
-      end
-    end
+    middle_offset +
+      middle_multiplier * calculate_length(middle_string) +
+      calculate_length(tail)
   end
 
-  def process_string(string)
-    puts "String: #{string}"
-
-    first_part = find_first_part(string)
-    middle_part = find_middle_part(string)
-    last_part = find_last_part(string)
-
-    puts "1: #{first_part}"
-    puts "2: #{middle_part}"
-    puts "3: #{last_part}"
-
-    first_part.size + find_first_count(string) * process_string(middle_part) + process_string(last_part)
+  def find_middle_string(string, middle_start, middle_length)
+    string[middle_start, middle_length]
   end
 
-  def find_first_part(string)
-    string.scan(/([A-Z]*)\(/).first.first
+  def find_last_part(string, middle_start, middle_length)
+    string[(middle_start + middle_length)..-1]
   end
 
-  def find_middle_part(string)
-    pair = find_number_groups(string).first
-
-    chars = pair.first.to_i
-
-    array = string.chars
-
-    middle = ""
-
-    (array.index(")") + 1).times { middle += array.shift }
-
-    chars.times { middle += array.shift }
-
-    middle
-  end
-
-  def find_last_part(string)
-    middle_part = find_middle_part(string)
-
-    string.split(middle_part).last
-  end
-
-  def find_first_count(string)
-    find_number_groups(string).first.last
-  end
-
-  def find_number_groups(group)
-    group.scan(/(\d+)[x](\d+)/)
-  end
-
-  def find_chars_and_count(segment)
-    chars = segment.split("(").last.split("x").first.to_i
-    count = segment.split("x").last.to_i
-
-    { chars: chars, count: count }
+  def find_number_groups(string)
+    /\((\d+)x(\d+)\)/.match string
   end
 
   def print_decompressed_length
-    puts "#Length: {@decompressed_length}"
+    puts "Length: #{@decompressed_length}"
   end
 
   def format_input(input)
