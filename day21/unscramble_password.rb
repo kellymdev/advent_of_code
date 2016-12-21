@@ -62,6 +62,7 @@ class UnscramblePassword
     letter = value[1]
     index = @password.index(letter)
 
+    # rotate right will rotate left to counteract the rotate right action of the scrambled password
     if index >= 4
       (index + 2).times { rotate_right("rotate right 1 step") }
     else
@@ -69,6 +70,7 @@ class UnscramblePassword
     end
   end
 
+  # this is rotating left to counteract the rotate right action of the scrambled password
   def rotate_right(instruction)
     value = /rotate right (\d) step/.match(instruction)
 
@@ -80,6 +82,7 @@ class UnscramblePassword
     @password = array.join + string_to_join
   end
 
+  # this is rotating right to counteract the rotate left action of the scrambled password
   def rotate_left(instruction)
     value = /rotate left (\d) step/.match(instruction)
 

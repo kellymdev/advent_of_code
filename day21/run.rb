@@ -2,8 +2,8 @@ require_relative 'scramble_password.rb'
 require_relative 'unscramble_password.rb'
 
 # password = "abcde"
-password = "ecabd"
-input = "rotate based on position of letter b"
+password = "eabcd"
+input = "rotate based on position of letter a"
 # # input = <<-STRING
 # swap position 4 with position 0
 # swap letter d with letter b
