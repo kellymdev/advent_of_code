@@ -1,4 +1,4 @@
-class ScramblePassword
+class UnscramblePassword
   def initialize(password, instructions)
     @password = password
     @instructions = format_instructions(instructions)
@@ -38,11 +38,11 @@ class ScramblePassword
     index1 = values[1].to_i
     index2 = values[2].to_i
 
-    letter1 = @password[index1]
+    letter2 = @password[index2]
 
-    @password.delete!(letter1)
+    @password.delete!(letter2)
 
-    @password.insert(index2, letter1)
+    @password.insert(index1, letter2)
   end
 
   def reverse_positions(instruction)
@@ -75,9 +75,9 @@ class ScramblePassword
     array = @password.chars
     string_to_join = ""
 
-    value[1].to_i.times { string_to_join += array.pop }
+    value[1].to_i.times { string_to_join += array.shift }
 
-    @password = string_to_join.reverse + array.join
+    @password = array.join + string_to_join
   end
 
   def rotate_left(instruction)
@@ -86,9 +86,9 @@ class ScramblePassword
     array = @password.chars
     string_to_join = ""
 
-    value[1].to_i.times { string_to_join += array.shift }
+    value[1].to_i.times { string_to_join += array.pop }
 
-    @password = array.join + string_to_join
+    @password = string_to_join.reverse + array.join
   end
 
   def swap_letter(instruction)
@@ -120,6 +120,6 @@ class ScramblePassword
   end
 
   def format_instructions(instructions)
-    instructions.split("\n")
+    instructions.split("\n").reverse
   end
 end
