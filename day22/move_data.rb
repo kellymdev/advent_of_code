@@ -1,12 +1,64 @@
 class MoveData
   def initialize(data_structure)
     @data_structure = format_data(data_structure)
+    @grid = format_grid
   end
 
   def run
+    print_grid
   end
 
   private
+
+  def print_grid
+    @grid.each do |row|
+      row.each do |cell|
+        print cell
+      end
+
+      puts
+    end
+  end
+
+  def format_grid
+    x = find_highest_x_value
+    y = find_highest_y_value
+
+   grid = create_grid(x, y)
+   populate_grid(grid, x)
+  end
+
+  def populate_grid(grid, x)
+    grid[0][x] = "G"
+
+    grid
+  end
+
+  def create_grid(x, y)
+    grid = []
+
+    (y + 1).times { grid << [] }
+
+    grid.each do |row|
+      (x + 1).times { row << "." }
+    end
+  end
+
+  def find_highest_x_value
+    highest_node = @data_structure.max_by do |node|
+      node_x_y(node[:name])[:x]
+    end
+
+    node_x_y(highest_node[:name])[:x]
+  end
+
+  def find_highest_y_value
+    highest_node = @data_structure.max_by do |node|
+      node_x_y(node[:name])[:y]
+    end
+
+    node_x_y(highest_node[:name])[:y]
+  end
 
   def format_data(data_structure)
     data = data_structure.split("\n")
@@ -28,6 +80,15 @@ class MoveData
     end
 
     array
+  end
+
+  def node_x_y(node_name)
+    data = node_name.scan(/x(\d+)-y(\d+)/)
+
+    {
+      x: data.first.first.to_i,
+      y: data.first.last.to_i
+    }
   end
 
   def node_name(node)
