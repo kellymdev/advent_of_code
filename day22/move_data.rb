@@ -13,7 +13,7 @@ class MoveData
   def print_grid
     @grid.each do |row|
       row.each do |cell|
-        print cell
+        print "#{cell}  "
       end
 
       puts
@@ -29,7 +29,11 @@ class MoveData
   end
 
   def populate_grid(grid, x)
-    grid[0][x] = "G"
+    @data_structure.each do |node|
+      coords = node_x_y(node[:name])
+
+      grid[coords[:y]][coords[:x]] = "#{node[:used]}/#{node[:available]}"
+    end
 
     grid
   end
