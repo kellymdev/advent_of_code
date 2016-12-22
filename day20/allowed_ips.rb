@@ -1,4 +1,4 @@
-class IpAddress
+class AllowedIps
   def initialize(blacklist, minimum_value, maximum_value)
     @blacklist = format_blacklist(blacklist)
     @minimum_value = minimum_value
@@ -6,12 +6,10 @@ class IpAddress
     @current_minimum = nil
     @current_maximum = nil
     @blacklisted_values = []
-    @lowest_ip = 0
+    @valid_ip_ranges = []
   end
 
   def run
-    return unless starts_with_zero?(@blacklist.first)
-
     create_blacklisted_values
 
     @blacklisted_values.each do |value|
@@ -26,13 +24,14 @@ class IpAddress
           update_current_maximum(highest)
         end
       else
-        @lowest_ip = consecutive_value_for_maximum
+        # the value is a valid ip
+        @valid_ip_ranges << [consecutive_value_for_maximum, lowest - 1]
 
-        break
+        update_current_maximum(highest)
       end
     end
 
-    print_lowest_ip
+    puts "Valid Ip ranges: #{@valid_ip_ranges}"
   end
 
   private
@@ -67,14 +66,6 @@ class IpAddress
 
   def value_included_in_range?(value)
     (@current_minimum..@current_maximum).include?(value)
-  end
-
-  def print_lowest_ip
-    puts "Lowest ip: #{@lowest_ip}"
-  end
-
-  def starts_with_zero?(range)
-    start_value(range).zero?
   end
 
   def start_value(range)
