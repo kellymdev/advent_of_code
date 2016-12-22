@@ -31,10 +31,24 @@ class AllowedIps
       end
     end
 
-    puts "Valid Ip ranges: #{@valid_ip_ranges}"
+    if @current_maximum != @maximum_value
+      @valid_ip_ranges << [consecutive_value_for_maximum, @maximum_value]
+    end
+
+    ip_count = calculate_valid_ips
+
+    print_ip_count(ip_count)
   end
 
   private
+
+  def print_ip_count(ip_count)
+    puts "Ip count: #{ip_count}"
+  end
+
+  def calculate_valid_ips
+    @valid_ip_ranges.map { |values| values.last - values.first + 1 }.reduce(:+)
+  end
 
   def create_blacklisted_values
     @blacklist.each_with_index do |range, index|
