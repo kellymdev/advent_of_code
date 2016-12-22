@@ -64,13 +64,17 @@ class UnscramblePassword
 
     strings = create_strings_for_each_position(@password)
 
+    puts "Original: #{strings}"
+
     rotated = strings.map do |string|
       original_rotate_based_on_position("rotate based on position of letter #{letter}", string)
     end
 
+    puts "Rotated: #{rotated}"
+
     unrotated = strings[0]
 
-    index_of_rotated = rotated.index(unrotated)
+    index_of_rotated = rotated.rindex(unrotated)
 
     @password = strings[index_of_rotated]
   end
