@@ -11,13 +11,17 @@ class GenerateDragon
       create_data
     end
 
+    puts "Data size: #{@data.size}"
+
     fit_data_to_disk
 
-    calculate_checksum(@data)
+    puts "Data trimmed to: #{@data.size}"
+
+    @checksum = @data
 
     while checksum_even?
-      puts "Calculating checksum..."
-      calculate_checksum(@checksum)
+      puts "Calculating checksum... #{@checksum.length}"
+      calculate_checksum
     end
 
     print_checksum
@@ -29,33 +33,16 @@ class GenerateDragon
     @checksum.size % 2 == 0
   end
 
-  def calculate_checksum(data)
-    @checksum = ""
-    pairs = data.scan(/../)
-
-    pairs.each do |pair|
-      if pair[0] == pair[1]
-        @checksum += "1"
-      else
-        @checksum += "0"
-      end
-    end
+  def calculate_checksum
+    @checksum.gsub!(/../,'00'=>'1', '11'=> '1', '10'=> '0', '01'=>"0")
   end
 
   def fit_data_to_disk
-    @data = @data.chars.take(@disk_length).join
+    @data = @data[0...@disk_length]
   end
 
   def print_checksum
     puts @checksum
-  end
-
-  def print_line
-    puts "-" * 20
-  end
-
-  def print_data
-    puts @data
   end
 
   def create_data
