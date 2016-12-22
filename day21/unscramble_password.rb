@@ -62,12 +62,57 @@ class UnscramblePassword
     letter = value[1]
     index = @password.index(letter)
 
-    # rotate right will rotate left to counteract the rotate right action of the scrambled password
-    if index >= 4
-      (index + 2).times { rotate_right("rotate right 1 step") }
-    else
-      (index + 1).times { rotate_right("rotate right 1 step") }
+    strings = create_strings_for_each_position(@password)
+
+    rotated = strings.map do |string|
+      original_rotate_based_on_position("rotate based on position of letter #{letter}", string)
     end
+
+    unrotated = strings[0]
+
+    index_of_rotated = rotated.index(unrotated)
+
+    @password = strings[index_of_rotated]
+  end
+
+  def create_strings_for_each_position(string)
+    strings = []
+
+    @password.length.times do |index|
+      new_string = original_rotate_right("rotate right #{index} steps", string)
+
+      strings << new_string
+    end
+
+    strings
+  end
+
+  def original_rotate_based_on_position(instruction, string)
+    value = /rotate based on position of letter ([a-z])/.match(instruction)
+
+    letter = value[1]
+    index = string.index(letter)
+
+    new_string = string
+
+    if index >= 4
+      (index + 2).times { new_string = original_rotate_right("rotate right 1 step", new_string) }
+    else
+      (index + 1).times {  new_string = original_rotate_right("rotate right 1 step", new_string) }
+    end
+
+    new_string
+  end
+
+  def original_rotate_right(instruction, string)
+    value = /rotate right (\d) step/.match(instruction)
+
+    array = string.chars
+    string_to_join = ""
+
+    value[1].to_i.times { string_to_join += array.pop }
+
+    string_to_join.reverse + array.join
   end
 
   # this is rotating left to counteract the rotate right action of the scrambled password
