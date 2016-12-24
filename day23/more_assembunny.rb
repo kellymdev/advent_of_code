@@ -3,7 +3,7 @@ class MoreAssembunny
     @instructions = format_input(instructions)
     @current_instruction = 0
     @registers = {
-      a: 7,
+      a: 12,
       b: 0,
       c: 0,
       d: 0
